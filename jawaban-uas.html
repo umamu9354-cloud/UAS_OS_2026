@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jawaban UAS - Sistem Operasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #d70751;
+            --secondary: #a80038;
+            --dark: #0a0a0f;
+            --accent: #6366f1;
+            --gold: #fbbf24;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #e5e7eb;
+            background: #0a0a0f;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0b2e 50%, #0a0a0f 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(215, 7, 81, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Loading Screen */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0b2e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s, visibility 0.8s;
+        }
+
+        .loading.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(99, 102, 241, 0.2);
+            border-top-color: var(--accent);
+            border-bottom-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent), var(--primary), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 2s linear infinite;
+            background-size: 200% auto;
+        }
+
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+
+        /* Particles */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 25s infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-120vh) translateX(80px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn-back {
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            font-size: 1.05rem;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(215, 7, 81, 0.6);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(215, 7, 81, 0.1));
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 4rem;
+            text-align: center;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s ease;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(99, 102, 241, 0.1),
+                transparent
+            );
+            animation: headerShine 8s linear infinite;
+        }
+
+        @keyframes headerShine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(215, 7, 81, 0.7)); }
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            color: #d1d5db;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+        }
+
+        /* Edit Instructions */
+        .edit-instructions {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
+            backdrop-filter: blur(20px);
+            border-left: 4px solid var(--gold);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.8s ease 0.2s both;
+        }
+
+        .edit-instructions h3 {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .edit-instructions ul {
+            margin-left: 2rem;
+            color: #d1d5db;
+        }
+
+        .edit-instructions li {
+            margin-bottom: 0.8rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .edit-instructions code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: var(--gold);
+            font-size: 0.95rem;
+        }
+
+        /* Question Section */
+        .question-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(215, 7, 81, 0.05));
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-left: 5px solid var(--accent);
+            padding: 3rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 0.8s ease forwards;
+        }
+
+        .question-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent);
+            border-radius: 50%;
+            filter: blur(40px);
+        }
+
+        .question-section:nth-child(2) { animation-delay: 0.1s; }
+        .question-section:nth-child(3) { animation-delay: 0.2s; }
+        .question-section:nth-child(4) { animation-delay: 0.3s; }
+        .question-section:nth-child(5) { animation-delay: 0.4s; }
+        .question-section:nth-child(6) { animation-delay: 0.5s; }
+        .question-section:nth-child(7) { animation-delay: 0.6s; }
+        .question-section:nth-child(8) { animation-delay: 0.7s; }
+        .question-section:nth-child(9) { animation-delay: 0.8s; }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .question-title {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .answer-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 2px dashed rgba(99, 102, 241, 0.3);
+            min-height: 250px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .answer-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .answer-placeholder {
+            color: #9ca3af;
+            font-style: italic;
+            text-align: center;
+            padding: 4rem 2rem;
+            font-size: 1.2rem;
+            line-height: 2;
+        }
+
+        /* Answer Content */
+        .answer-content {
+            color: #e5e7eb;
+            font-size: 1.1rem;
+            line-height: 1.9;
+        }
+
+        .answer-content h3 {
+            color: var(--accent);
+            margin: 2rem 0 1rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .answer-content p {
+            margin-bottom: 1.2rem;
+            color: #d1d5db;
+        }
+
+        .answer-content ul,
+        .answer-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+            color: #d1d5db;
+        }
+
+        .answer-content li {
+            margin-bottom: 0.8rem;
+            line-height: 1.8;
+        }
+
+        .answer-content code {
+            background: rgba(99, 102, 241, 0.2);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: var(--accent);
+            font-size: 0.95rem;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .answer-content pre {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3));
+            backdrop-filter: blur(10px);
+            color: #10b981;
+            padding: 2rem;
+            border-radius: 15px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .answer-content pre code {
+            background: none;
+            color: #10b981;
+            padding: 0;
+            border: none;
+            font-size: 1rem;
+        }
+
+        /* Template Box */
+        .template-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(215, 7, 81, 0.05));
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.8s ease 0.6s both;
+        }
+
+        .template-box h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .template-box > p {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .template-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .template-card h4 {
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .template-card pre {
+            background: rgba(0, 0, 0, 0.3);
+            color: #d1d5db;
+            padding: 1.2rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        /* Example Section */
+        .example-section {
+            border-left-color: var(--success) !important;
+        }
+
+        .example-section .question-number {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .example-section .answer-box {
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, rgba(10, 10, 15, 0.95), rgba(26, 11, 46, 0.95));
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(99, 102, 241, 0.3);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+            border-radius: 30px 30px 0 0;
+            margin-top: 3rem;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        footer p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #d1d5db;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+                padding: 0.8rem 1.5rem;
+                font-size: 0.95rem;
+            }
+
+            .page-header {
+                padding: 2.5rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+                line-height: 1.3;
+            }
+
+            .page-header p {
+                font-size: 1rem;
+            }
+
+            .edit-instructions {
+                padding: 1.5rem 1.2rem;
+                border-radius: 15px;
+            }
+
+            .edit-instructions h3 {
+                font-size: 1.4rem;
+            }
+
+            .edit-instructions li {
+                font-size: 0.95rem;
+            }
+
+            .question-section {
+                padding: 1.8rem 1.2rem;
+                border-radius: 20px;
+            }
+
+            .question-number {
+                font-size: 1rem;
+                padding: 0.7rem 1.5rem;
+            }
+
+            .question-title {
+                font-size: 1.4rem;
+                line-height: 1.5;
+            }
+
+            .answer-box {
+                padding: 1.5rem;
+                border-radius: 15px;
+            }
+
+            .answer-placeholder {
+                font-size: 1rem;
+                padding: 2rem 1rem;
+            }
+
+            .template-box {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .template-box h2 {
+                font-size: 1.8rem;
+            }
+
+            .template-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            footer {
+                padding: 2rem 1.5rem;
+            }
+
+            footer p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .page-header p {
+                font-size: 0.9rem;
+            }
+
+            .question-title {
+                font-size: 1.2rem;
+            }
+
+            .loading-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .page-header {
+                padding: 3rem 2rem;
+            }
+
+            .question-section {
+                padding: 2rem;
+            }
+
+            .template-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loader"></div>
+        <div class="loading-text">Loading Jawaban UAS...</div>
+    </div>
+
+    <!-- Particles -->
+    <div id="particles"></div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                📝 Jawaban UAS
+            </div>
+            <a href="index.html" class="btn-back">
+                ← Kembali ke Home
+            </a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>📄 Jawaban UAS Sistem Operasi</h1>
+            <p>Muhammad Khotibul Umam - 102240059 - Informatika IM24B</p>
+        </div>
+        
+        <!-- Question 1 -->
+        <div class="question-section">
+            <span class="question-number">Soal 1</span>
+            <h2 class="question-title">Jelaskan secara rinci perbedaan antara struktur sistem operasi dengan pendekatan berlapis (layered approach) dan model client-server, serta jelaskan kelebihan dan kekurangan masing-masing dalam konteks pengelolaan sumber daya dan keamanan sistem!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Pendekatan berlapis (layered approach) pada sistem operasi membagi sistem ke dalam beberapa lapisan yang tersusun dari lapisan paling dasar berupa perangkat keras hingga lapisan teratas berupa antarmuka pengguna, di mana setiap lapisan hanya dapat berinteraksi dengan lapisan di bawahnya, sehingga struktur sistem menjadi lebih terorganisir dan mudah dikembangkan serta diuji, namun kelemahannya adalah performa yang cenderung lebih lambat karena setiap permintaan harus melewati banyak lapisan. Sementara itu, model client-server memisahkan fungsi sistem operasi menjadi server yang menyediakan layanan inti seperti manajemen memori dan file, serta client yang meminta layanan tersebut, sehingga sistem menjadi lebih fleksibel, modular, dan aman karena layanan berjalan terisolasi, tetapi kekurangannya adalah komunikasi antar client dan server dapat menimbulkan overhead yang berdampak pada kinerja sistem.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question-section">
+            <span class="question-number">Soal 2</span>
+            <h2 class="question-title">Jelaskan dengan rinci siklus hidup proses dalam sistem operasi, termasuk uraikan lima keadaan utama proses serta peran blok kendali proses (Process Control Block/PCB) dalam menjaga status proses. Selain itu, jelaskan bagaimana mekanisme peralihan konteks (context switch) terjadi dan dampaknya terhadap kinerja sistem!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Siklus hidup proses dalam sistem operasi terdiri dari lima keadaan utama yaitu new (proses baru dibuat), ready (proses siap dieksekusi), running (proses sedang dijalankan oleh CPU), waiting atau blocked (proses menunggu suatu kejadian seperti input/output), dan terminated (proses selesai dieksekusi), di mana seluruh informasi penting proses seperti ID proses, status, register CPU, dan informasi memori disimpan dalam Process Control Block (PCB) agar sistem operasi dapat mengelola dan melanjutkan proses dengan benar. Context switch terjadi ketika CPU berpindah dari satu proses ke proses lain dengan cara menyimpan konteks proses lama ke PCB dan memuat konteks proses baru, yang meskipun penting untuk multitasking, namun dapat menurunkan kinerja sistem karena membutuhkan waktu tambahan tanpa melakukan pekerjaan komputasi langsung.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question-section">
+            <span class="question-number">Soal 3</span>
+            <h2 class="question-title">Jelaskan secara mendalam tentang konsep thread dalam sistem operasi, termasuk definisi thread, komponen utama setiap thread, dan perbedaan antara proses (heavyweight) dan thread (lightweight). Selanjutnya, uraikan tiga model multithreading beserta kelebihan dan kekurangannya!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Thread merupakan unit eksekusi terkecil dalam sebuah proses yang memiliki komponen utama berupa thread ID, program counter, register, dan stack, sementara sumber daya seperti memori dan file dibagi bersama dalam satu proses, sehingga thread disebut lightweight dibandingkan proses yang bersifat heavyweight karena proses memiliki ruang alamat dan sumber daya sendiri. Model many-to-one memetakan banyak thread pengguna ke satu thread kernel sehingga efisien namun tidak mendukung paralelisme, model one-to-one memetakan satu thread pengguna ke satu thread kernel sehingga mendukung eksekusi paralel tetapi lebih boros sumber daya, sedangkan model many-to-many menggabungkan kelebihan keduanya dengan fleksibilitas dan efisiensi yang lebih baik meskipun implementasinya lebih kompleks.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="question-section">
+            <span class="question-number">Soal 4</span>
+            <h2 class="question-title">Jelaskan secara rinci konsep CPU scheduling dalam sistem operasi, termasuk tujuan, terminologi penting, jenis scheduler, serta kelebihan dan kekurangan algoritma penjadwalan CPU!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ CPU scheduling bertujuan mengatur pembagian waktu CPU agar proses dapat berjalan secara adil dan efisien dengan terminologi penting seperti burst time (waktu eksekusi CPU), turnaround time (waktu total dari proses masuk hingga selesai), dan waiting time (waktu menunggu di ready queue), di mana Long Term Scheduler menentukan proses yang masuk ke sistem, Medium Term Scheduler mengatur proses yang disuspensi, dan Short Term Scheduler memilih proses yang dieksekusi CPU. Algoritma FCFS sederhana namun kurang efisien, SJF optimal dalam waktu tunggu tetapi sulit diprediksi, Priority Scheduling fleksibel namun berpotensi starvation, sedangkan Round Robin adil untuk sistem time-sharing namun dapat meningkatkan overhead context switch.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="question-section">
+            <span class="question-number">Soal 5</span>
+            <h2 class="question-title">Jelaskan secara mendalam konsep sinkronisasi proses dalam sistem operasi serta contoh masalah klasik sinkronisasi!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Sinkronisasi proses adalah mekanisme untuk mengatur akses proses ke critical section agar tidak terjadi konflik dengan memenuhi tiga syarat utama yaitu mutual exclusion, progress, dan bounded waiting, di mana sinkronisasi sangat penting dalam sistem multiproses untuk menjaga konsistensi data. Masalah klasik seperti Producer-Consumer menggambarkan koordinasi antara proses penghasil dan pemakai data, Dining Philosophers menunjukkan potensi deadlock dan starvation dalam penggunaan sumber daya bersama, sedangkan Readers-Writers menekankan pengaturan prioritas antara proses pembaca dan penulis data.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="question-section">
+            <span class="question-number">Soal 6</span>
+            <h2 class="question-title">Jelaskan secara menyeluruh konsep deadlock dalam sistem operasi beserta metode penanganannya!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Deadlock adalah kondisi ketika dua atau lebih proses saling menunggu sumber daya yang tidak akan pernah dilepaskan, yang terjadi jika empat kondisi terpenuhi yaitu mutual exclusion, hold and wait, no preemption, dan circular wait, contohnya seperti dua proses yang saling mengunci file atau dua kendaraan yang saling berhadapan di jalan sempit. Penanganan deadlock dapat dilakukan melalui pencegahan dengan menghilangkan salah satu kondisi, penghindaran seperti algoritma Banker, deteksi dan pemulihan dengan menghentikan proses tertentu, serta pengabaian yang menganggap deadlock jarang terjadi, di mana setiap metode memiliki kelebihan dan kekurangan dari segi kompleksitas dan efisiensi sistem.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="question-section">
+            <span class="question-number">Soal 7</span>
+            <h2 class="question-title">Jelaskan secara rinci tujuan dan fungsi manajemen media penyimpanan dalam sistem operasi!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Manajemen media penyimpanan bertujuan mengatur penggunaan ruang penyimpanan secara efisien dan aman dengan mengelola alokasi ruang, menangani fragmentasi, serta menjaga keandalan dan keamanan data pada media sekunder seperti HDD, SSD, dan cloud storage, di mana sistem operasi bertanggung jawab memastikan data tersimpan dengan baik, mudah diakses, dan terlindungi dari kerusakan maupun akses tidak sah melalui mekanisme backup, enkripsi, dan kontrol akses.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="question-section">
+            <span class="question-number">Soal 8</span>
+            <h2 class="question-title">Bandingkan dan jelaskan tiga teknik alokasi ruang penyimpanan serta contoh penggunaannya!</h2>
+            <div class="answer-box">
+                <!-- ISI JAWABAN ANDA DI SINI -->
+                <div class="answer-placeholder">
+                    🖊️ Alokasi kontigu menyimpan file dalam blok berurutan sehingga akses cepat namun rentan fragmentasi, alokasi tertaut menyimpan blok file secara berantai sehingga fleksibel tetapi akses acak lambat, sedangkan alokasi indeks menggunakan blok indeks untuk menyimpan alamat semua blok file sehingga efisien untuk akses langsung meskipun membutuhkan ruang tambahan, di mana alokasi kontigu cocok untuk file statis, alokasi tertaut untuk file yang sering berubah ukuran, dan alokasi indeks untuk sistem file modern yang membutuhkan fleksibilitas tinggi.<br>
+                </div>
+                <!-- AKHIR JAWABAN -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p style="font-size: 1.3rem; margin-bottom: 0.5rem; font-weight: 600;">© 2025 Muhammad Khotibul Umam - UAS Sistem Operasi</p>
+        <p style="font-size: 1.1rem;">Informatika IM24B - ITSNU Pekalongan</p>
+        <p style="margin-top: 1.5rem; opacity: 0.7; font-size: 0.95rem;">Debian adalah trademark dari Software in the Public Interest, Inc.</p>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hide');
+            }, 1500);
+        });
+
+        // Particles Background
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 60;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 6 + 3;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 15 + 15) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll Animation for Feature Cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.question-section').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Parallax effect on scroll
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const parallaxElements = document.querySelectorAll('.page-header, .question-section');
+                    
+                    parallaxElements.forEach((el, index) => {
+                        const speed = 0.05 * (index + 1);
+                        const yPos = -(scrolled * speed);
+                        el.style.transform = `translateY(${yPos}px)`;
+                    });
+                    
+                    ticking = false;
+                });
+                
+                ticking = true;
+            }
+        });
+    </script>
+</body>
+</html>

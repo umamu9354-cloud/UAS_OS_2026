@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Jawaban UAS Sistem Operasi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* =========================
+   COSMIC JUDGMENT MODE
+   SINGLE FILE EDITION
+========================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Times New Roman", serif;
+}
+
+body{
+  background:#f8fafc;
+  color:#111827;
+  line-height:1.7;
+}
+
+/* COVER */
+.cover{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:40px;
+}
+
+.cover h1{
+  font-size:36px;
+  letter-spacing:2px;
+}
+
+.cover h2{
+  margin-top:10px;
+  font-size:20px;
+  font-weight:normal;
+}
+
+.identity{
+  margin-top:40px;
+  text-align:left;
+  width:320px;
+}
+
+.identity p{
+  margin-bottom:8px;
+}
+
+.btn-start{
+  margin-top:40px;
+  padding:12px 28px;
+  border:2px solid #111827;
+  text-decoration:none;
+  color:#111827;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  background:white;
+  border-bottom:1px solid #e5e7eb;
+  padding:16px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:10;
+}
+
+header h3{
+  font-size:18px;
+}
+
+header button{
+  margin-left:6px;
+  padding:6px 14px;
+  border:1px solid #111827;
+  background:white;
+  cursor:pointer;
+}
+
+/* INFO */
+.info{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 30px;
+  font-size:14px;
+}
+
+/* PROGRESS */
+.progress{
+  height:6px;
+  background:#e5e7eb;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:#111827;
+}
+
+/* CONTENT */
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:30px 20px;
+}
+
+.card{
+  border:1px solid #d1d5db;
+  padding:24px;
+  margin-bottom:30px;
+}
+
+.card h4{
+  margin-bottom:12px;
+  border-bottom:2px solid #111827;
+  padding-bottom:6px;
+}
+
+/* INPUT */
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:1px solid #9ca3af;
+  font-size:14px;
+}
+
+textarea{
+  min-height:200px;
+  resize:none;
+}
+
+/* META */
+.meta{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  margin-top:6px;
+}
+
+/* WATERMARK */
+#watermark{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  color:rgba(0,0,0,0.05);
+  transform:rotate(-30deg);
+  pointer-events:none;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:30px;
+  font-size:13px;
+  color:#6b7280;
+}
+
+/* PRESENT MODE */
+.present *{
+  font-size:1.15em;
+}
+
+/* PRINT */
+@media print{
+  header,.progress,.info,.btn-start{display:none;}
+  body{background:white;}
+  .card{page-break-inside:avoid;}
+}
+</style>
+</head>
+
+<body>
+
+<div id="watermark"></div>
+
+<!-- COVER -->
+<section class="cover" id="cover">
+  <h1>UJIAN AKHIR SEMESTER</h1>
+  <h2>Mata Kuliah Sistem Operasi</h2>
+
+  <div class="identity">
+    <p>Nama : ____________________</p>
+    <p>NIM : ____________________</p>
+    <p>Program Studi : ____________________</p>
+    <p>Fakultas : ____________________</p>
+  </div>
+
+  <button class="btn-start" onclick="startUAS()">MASUK KE LEMBAR JAWABAN</button>
+</section>
+
+<!-- HEADER -->
+<header id="header" style="display:none;">
+  <h3>Jawaban UAS Sistem Operasi</h3>
+  <div>
+    <button onclick="togglePresent()">Presentasi</button>
+    <button onclick="toggleLock()">Lock</button>
+    <button onclick="window.print()">Print / PDF</button>
+  </div>
+</header>
+
+<div class="info" id="info" style="display:none;">
+  <span id="timer">⏱️ 00:00:00</span>
+  <span id="stats">0 / 4 selesai</span>
+</div>
+
+<div class="progress" id="progressWrap" style="display:none;">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- CONTENT -->
+<section class="container" id="content" style="display:none;">
+
+  <div class="card">
+    <h4>Identitas Mahasiswa</h4>
+    <input id="nama" placeholder="Nama Lengkap">
+    <input id="nim" placeholder="NIM">
+    <input id="prodi" placeholder="Program Studi">
+  </div>
+
+  <!-- SOAL -->
+  <div class="card soal">
+    <h4>Soal Nomor 1</h4>
+    <textarea data-key="s1"></textarea>
+    <div class="meta">
+      <span>0 kata</span>
+      <span>Belum dikerjakan</span>
+    </div>
+  </div>
+
+  <div class="card soal">
+    <h4>Soal Nomor 2</h4>
+    <textarea data-key="s2"></textarea>
+    <div class="meta">
+      <span>0 kata</span>
+      <span>Belum dikerjakan</span>
+    </div>
+  </div>
+
+  <div class="card soal">
+    <h4>Soal Nomor 3</h4>
+    <textarea data-key="s3"></textarea>
+    <div class="meta">
+      <span>0 kata</span>
+      <span>Belum dikerjakan</span>
+    </div>
+  </div>
+
+  <div class="card soal">
+    <h4>Soal Nomor 4</h4>
+    <textarea data-key="s4"></textarea>
+    <div class="meta">
+      <span>0 kata</span>
+      <span>Belum dikerjakan</span>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  Cosmic Judgment Mode • Auto Save Aktif
+</footer>
+
+<script>
+/* =========================
+   COSMIC JUDGMENT SCRIPT
+========================= */
+
+const areas = document.querySelectorAll("textarea");
+const stats = document.getElementById("stats");
+const bar = document.getElementById("progressBar");
+const timerEl = document.getElementById("timer");
+const watermark = document.getElementById("watermark");
+
+let locked = false;
+
+/* START */
+function startUAS(){
+  document.getElementById("cover").style.display="none";
+  document.getElementById("header").style.display="flex";
+  document.getElementById("info").style.display="flex";
+  document.getElementById("progressWrap").style.display="block";
+  document.getElementById("content").style.display="block";
+}
+
+/* TIMER */
+let sec = Number(localStorage.getItem("timer")) || 0;
+setInterval(()=>{
+  sec++;
+  localStorage.setItem("timer",sec);
+  const h = String(Math.floor(sec/3600)).padStart(2,"0");
+  const m = String(Math.floor(sec%3600/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  timerEl.textContent = `⏱️ ${h}:${m}:${s}`;
+},1000);
+
+/* UPDATE */
+function update(){
+  let done=0;
+  areas.forEach(a=>{
+    const words = a.value.trim().split(/\s+/).filter(Boolean).length;
+    const meta = a.nextElementSibling;
+    meta.children[0].textContent = words+" kata";
+    meta.children[1].textContent =
+      words===0 ? "Belum dikerjakan" :
+      words<60 ? "Sedang dikerjakan" :
+      "Selesai";
+    if(words>=60) done++;
+  });
+  bar.style.width = (done/areas.length*100)+"%";
+  stats.textContent = `${done} / ${areas.length} selesai`;
+}
+
+/* INIT */
+areas.forEach(a=>{
+  const key=a.dataset.key;
+  a.value = localStorage.getItem(key)||"";
+  a.addEventListener("input",()=>{
+    localStorage.setItem(key,a.value);
+    a.style.height="auto";
+    a.style.height=a.scrollHeight+"px";
+    update();
+  });
+});
+update();
+
+/* LOCK */
+function toggleLock(){
+  locked=!locked;
+  areas.forEach(a=>a.disabled=locked);
+  alert(locked?"Jawaban dikunci":"Jawaban dibuka");
+}
+
+/* PRESENT */
+function togglePresent(){
+  document.body.classList.toggle("present");
+}
+
+/* WATERMARK */
+["nama","nim"].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener("input",()=>{
+    watermark.textContent =
+      document.getElementById("nama").value+" • "+
+      document.getElementById("nim").value;
+  });
+});
+</script>
+
+</body>
+</html>
